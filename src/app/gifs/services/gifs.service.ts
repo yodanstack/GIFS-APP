@@ -1,11 +1,20 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Gif, SearchResponce } from '../interfaces/gifs.interfaces';
+
 
 @Injectable({providedIn: 'root'})
 export class GifsService {
 
-  private _tagsHistory: string [] = [
+  public gifsList: Gif[] = [];
 
-  ]
+  private _tagsHistory: string [] = []
+    private apiKey: string = '3iqVcv8AtOtVlP0DJhN49zjb68t3BnEy';
+    private serviceUrl: string = 'https://api.giphy.com/v1/gifs';
+
+  constructor(private http: HttpClient) {
+
+  }
 
 private organiceHistory( tag: string ){
   tag = tag.toLocaleLowerCase();
@@ -25,10 +34,27 @@ private organiceHistory( tag: string ){
     return [...this._tagsHistory];
   }
 
-  public searchTag( tag: string ): void {
+   searchTag( tag: string ): void {
     if (tag.length === 0) return;
 
     this.organiceHistory(tag);
+
+
+    const params = new HttpParams()
+    .set('api_key', this.apiKey)
+    .set('limit', '10')
+    .set('q', tag)
+
+      this.http.get<SearchResponce>(`${ this.serviceUrl }/search?`, {params})
+      .subscribe( resp => {
+
+       this.gifsList = resp.data;
+       console.log({gifs: this.gifsList });
+      })
+
+    // fetch ('https://api.giphy.com/v1/gifs/search?api_key=3iqVcv8AtOtVlP0DJhN49zjb68t3BnEy&q=valorant&limit=10')
+    // .then (resp => resp.json() )
+    // .then ( data => console.log(data) );
 
     // this._tagsHistory.unshift( tag );
   }

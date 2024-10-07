@@ -13,7 +13,7 @@ export class GifsService {
     private serviceUrl: string = 'https://api.giphy.com/v1/gifs';
 
   constructor(private http: HttpClient) {
-
+    this.LoadlocalStorage();
   }
 
 private organiceHistory( tag: string ){
@@ -26,9 +26,25 @@ private organiceHistory( tag: string ){
   this._tagsHistory.unshift( tag );
 
   this._tagsHistory = this.tagsHistory.splice(0,10);
+  this.SavelocalStorage();
 }
 
 
+  private SavelocalStorage(){
+    localStorage.setItem('History', JSON.stringify (this._tagsHistory));
+  }
+
+  private LoadlocalStorage(){
+   if( !localStorage.getItem('History') ) {
+    return;
+   }
+   this._tagsHistory = JSON.parse(localStorage.getItem('History')! );
+
+ if(this.tagsHistory.length === 0) return;
+ this.searchTag( this._tagsHistory[0] );
+
+
+  }
 
   get tagsHistory() {
     return [...this._tagsHistory];
@@ -49,7 +65,7 @@ private organiceHistory( tag: string ){
       .subscribe( resp => {
 
        this.gifsList = resp.data;
-       console.log({gifs: this.gifsList });
+      //  console.log({gifs: this.gifsList });
       })
 
     // fetch ('https://api.giphy.com/v1/gifs/search?api_key=3iqVcv8AtOtVlP0DJhN49zjb68t3BnEy&q=valorant&limit=10')

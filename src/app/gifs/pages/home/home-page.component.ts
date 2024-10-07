@@ -11,10 +11,9 @@ import { Gif } from '../../interfaces/gifs.interfaces';
   styleUrl: './home.component.css'
 })
 export class HomePageComponent {
-  constructor(private gifService: GifsService){
+  constructor(private gifService: GifsService) { }
 
-    }
-    get gifs(): Gif[]{
-      return this.gifService.gifsList;
-    }
+  get gifs(): Gif[] {
+    return this.gifService.gifsList;
+  }
 }
